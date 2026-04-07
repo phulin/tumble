@@ -319,7 +319,7 @@ export class Game extends Scene {
 		this.matter.add.rectangle(w + thick / 2, h / 2, thick, h * 2, { isStatic: true }); // right
 
 		this.time.addEvent({
-			delay: 100,
+			delay: 200,
 			callback: this.combineLongestWord,
 			callbackScope: this,
 			loop: true,
