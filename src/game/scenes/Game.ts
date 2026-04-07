@@ -17,7 +17,9 @@ export class Game extends Scene {
 	nextLetter: Phaser.GameObjects.Text;
 	fallingTexts: Phaser.GameObjects.Text[] = [];
 	scoreText: Phaser.GameObjects.Text;
+	wordsText: Phaser.GameObjects.Text;
 	score: number = 0;
+	wordsFormed: number = 0;
 
 	trie: TrieNode;
 	isGameOver: boolean = false;
@@ -141,6 +143,10 @@ export class Game extends Scene {
 		if (!result) return;
 
 		const { word, path } = result;
+
+		// Skip if this is just re-detecting an already-formed word
+		if (path.length === 1 && this.fallingTexts[path[0]].text === word) return;
+
 		const pathSet = new Set(path);
 
 		const cx = path.reduce((s, i) => s + this.fallingTexts[i].x, 0) / path.length;
@@ -167,6 +173,33 @@ export class Game extends Scene {
 
 		this.addPhysics(wordObj);
 		this.fallingTexts.push(wordObj);
+
+		// Score: longer words = higher score (length²)
+		const points = word.length * word.length;
+		this.score += points;
+		this.wordsFormed++;
+		this.scoreText.setText(`Score: ${this.score}`);
+		this.wordsText.setText(`Words: ${this.wordsFormed}`);
+
+		// Floating score popup
+		const popup = this.add
+			.text(cx, cy - 30, `${word} +${points}`, {
+				fontFamily: "Georgia",
+				fontSize: 28,
+				color: "#2a7a2a",
+				fontStyle: "bold",
+			})
+			.setOrigin(0.5)
+			.setDepth(400);
+
+		this.tweens.add({
+			targets: popup,
+			y: cy - 100,
+			alpha: 0,
+			duration: 1200,
+			ease: "Power2",
+			onComplete: () => popup.destroy(),
+		});
 	}
 
 	create() {
@@ -174,6 +207,7 @@ export class Game extends Scene {
 		this.camera.setBackgroundColor(0xf5f0e8);
 		this.isGameOver = false;
 		this.score = 0;
+		this.wordsFormed = 0;
 		this.fallingTexts = [];
 		this.letterDropTimes = new Map();
 
@@ -181,10 +215,18 @@ export class Game extends Scene {
 		this.trie = this.buildTrie(words);
 
 		this.scoreText = this.add
-			.text(16, 16, "Dropped: 0", {
+			.text(16, 16, "Score: 0", {
 				fontFamily: "Georgia",
 				fontSize: 36,
 				color: "#4a4a4a",
+			})
+			.setDepth(200);
+
+		this.wordsText = this.add
+			.text(16, 56, "Words: 0", {
+				fontFamily: "Georgia",
+				fontSize: 20,
+				color: "#7a7a7a",
 			})
 			.setDepth(200);
 
@@ -294,8 +336,6 @@ export class Game extends Scene {
 		this.addPhysics(this.nextLetter);
 		this.letterDropTimes.set(this.nextLetter, this.time.now);
 		this.fallingTexts.push(this.nextLetter);
-		this.score++;
-		this.scoreText.setText(`Dropped: ${this.score}`);
 		this.createNextLetter();
 	}
 }
