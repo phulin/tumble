@@ -2,7 +2,7 @@ import { Scene } from "phaser";
 import wordsRaw from "../../words.txt?raw";
 
 const LETTER_BAG = "EEEEEEEEEAAAAAARRRRIIIIOOOTTNNNSSSLLDDGGBCMPFHKUVWY";
-const SEARCH_RADIUS = 100;
+const SEARCH_RADIUS = 40;
 const MIN_WORD_LENGTH = 3;
 const PLAY_AREA_TOP = 80; // below score label
 
@@ -115,11 +115,13 @@ export class Game extends Scene {
 			}
 
 			const curr = letters[idx];
+			const cb = (curr.body as MatterJS.BodyType).bounds;
 			for (let j = 0; j < letters.length; j++) {
 				if (visited.has(j)) continue;
 				const other = letters[j];
-				const dx = other.x - curr.x;
-				const dy = other.y - curr.y;
+				const ob = (other.body as MatterJS.BodyType).bounds;
+				const dx = Math.max(0, Math.max(cb.min.x, ob.min.x) - Math.min(cb.max.x, ob.max.x));
+				const dy = Math.max(0, Math.max(cb.min.y, ob.min.y) - Math.min(cb.max.y, ob.max.y));
 				if (dx * dx + dy * dy <= SEARCH_RADIUS * SEARCH_RADIUS) {
 					visited.add(j);
 					dfs(j, node, consumed, newPath, visited);
