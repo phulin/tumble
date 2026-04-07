@@ -5,8 +5,12 @@ import { Game as MainGame } from "./scenes/Game";
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config: Phaser.Types.Core.GameConfig = {
 	type: AUTO,
-	width: 1024,
-	height: 768,
+	width: window.innerWidth,
+	height: window.innerHeight,
+	scale: {
+		mode: Phaser.Scale.RESIZE,
+		autoCenter: Phaser.Scale.CENTER_BOTH,
+	},
 	physics: {
 		default: "matter",
 		matter: {
@@ -15,7 +19,7 @@ const config: Phaser.Types.Core.GameConfig = {
 		},
 	},
 	parent: "game-container",
-	backgroundColor: "#028af8",
+	backgroundColor: "#f5f0e8",
 	scene: MainGame,
 };
 

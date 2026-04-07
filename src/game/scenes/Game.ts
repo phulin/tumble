@@ -94,6 +94,7 @@ interface TrieNode {
 export class Game extends Scene {
 	camera: Phaser.Cameras.Scene2D.Camera;
 
+	wallBodies: MatterJS.BodyType[] = [];
 	nextLetter: Phaser.GameObjects.Text;
 	fallingTexts: Phaser.GameObjects.Text[] = [];
 	scoreText: Phaser.GameObjects.Text;
@@ -111,14 +112,20 @@ export class Game extends Scene {
 
 	// Scan the text object's internal canvas to find the tightest rectangle around actual pixels.
 	// Returns dimensions in game units (accounts for canvas resolution scaling).
-	glyphBounds(text: Phaser.GameObjects.Text): { width: number; height: number } {
+	glyphBounds(text: Phaser.GameObjects.Text): {
+		width: number;
+		height: number;
+	} {
 		const canvas = text.canvas;
 		const ctx = text.context;
 		const cw = canvas.width;
 		const ch = canvas.height;
 		const data = ctx.getImageData(0, 0, cw, ch).data;
 
-		let minX = cw, maxX = 0, minY = ch, maxY = 0;
+		let minX = cw,
+			maxX = 0,
+			minY = ch,
+			maxY = 0;
 		for (let y = 0; y < ch; y++) {
 			for (let x = 0; x < cw; x++) {
 				if (data[(y * cw + x) * 4 + 3] > 10) {
@@ -229,8 +236,10 @@ export class Game extends Scene {
 
 		const pathSet = new Set(path);
 
-		const cx = path.reduce((s, i) => s + this.fallingTexts[i].x, 0) / path.length;
-		const cy = path.reduce((s, i) => s + this.fallingTexts[i].y, 0) / path.length;
+		const cx =
+			path.reduce((s, i) => s + this.fallingTexts[i].x, 0) / path.length;
+		const cy =
+			path.reduce((s, i) => s + this.fallingTexts[i].y, 0) / path.length;
 
 		// Remove constituent letter objects from physics and scene
 		const toRemove = path.map((i) => this.fallingTexts[i]);
@@ -240,7 +249,9 @@ export class Game extends Scene {
 		}
 
 		// Create combined word object and add to physics
-		const ch = Math.max(0, 0x54 - 10 * word.length).toString(16).padStart(2, "0");
+		const ch = Math.max(0, 0x54 - 10 * word.length)
+			.toString(16)
+			.padStart(2, "0");
 		const wordObj = this.add
 			.text(cx, cy, word, {
 				fontFamily: "Georgia",
@@ -282,9 +293,26 @@ export class Game extends Scene {
 		});
 	}
 
+	createBoundaries() {
+		// Remove old walls
+		for (const body of this.wallBodies) {
+			this.matter.world.remove(body);
+		}
+		this.wallBodies = [];
+
+		const w = this.scale.width;
+		const h = this.scale.height;
+		const thick = 50;
+
+		this.wallBodies.push(
+			this.matter.add.rectangle(w / 2, h + thick / 2, w + thick * 2, thick, { isStatic: true }),
+			this.matter.add.rectangle(-thick / 2, h / 2, thick, h * 2, { isStatic: true }),
+			this.matter.add.rectangle(w + thick / 2, h / 2, thick, h * 2, { isStatic: true }),
+		);
+	}
+
 	create() {
 		this.camera = this.cameras.main;
-		this.camera.setBackgroundColor(0xf5f0e8);
 		this.isGameOver = false;
 		this.score = 0;
 		this.wordsFormed = 0;
@@ -310,13 +338,12 @@ export class Game extends Scene {
 			})
 			.setDepth(200);
 
-		// Physics boundaries — top wall sits just below the score label
-		const w = this.scale.width;
-		const h = this.scale.height;
-		const thick = 50;
-		this.matter.add.rectangle(w / 2, h + thick / 2, w + thick * 2, thick, { isStatic: true }); // bottom
-		this.matter.add.rectangle(-thick / 2, h / 2, thick, h * 2, { isStatic: true }); // left
-		this.matter.add.rectangle(w + thick / 2, h / 2, thick, h * 2, { isStatic: true }); // right
+			this.createBoundaries();
+
+		this.scale.on('resize', (gameSize: Phaser.Structs.Size) => {
+			this.camera.setSize(gameSize.width, gameSize.height);
+			this.createBoundaries();
+		});
 
 		this.time.addEvent({
 			delay: 200,
