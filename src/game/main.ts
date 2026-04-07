@@ -5,6 +5,8 @@ import { Game as MainGame } from "./scenes/Game";
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config: Phaser.Types.Core.GameConfig = {
 	type: AUTO,
+	antialias: true,
+	antialiasGL: true,
 	width: window.innerWidth,
 	height: window.innerHeight,
 	scale: {

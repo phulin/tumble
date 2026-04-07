@@ -5,6 +5,7 @@ const LETTER_BAG = "EEEEEEEEEAAAAAARRRRIIIIOOOTTNNNSSSLLDDGGBCMPFHKUVWY";
 const SEARCH_RADIUS = 40;
 const MIN_WORD_LENGTH = 3;
 const PLAY_AREA_TOP = 80; // below score label
+const TEXT_RESOLUTION = window.devicePixelRatio || 1;
 
 type Vec2 = { x: number; y: number };
 
@@ -258,6 +259,7 @@ export class Game extends Scene {
 				fontSize: Math.max(8, 77 - 5 * word.length),
 				color: `#${ch}${ch}${ch}`,
 				align: "center",
+				resolution: TEXT_RESOLUTION,
 			})
 			.setOrigin(0.5)
 			.setDepth(150);
@@ -279,6 +281,7 @@ export class Game extends Scene {
 				fontSize: 28,
 				color: "#2a7a2a",
 				fontStyle: "bold",
+				resolution: TEXT_RESOLUTION,
 			})
 			.setOrigin(0.5)
 			.setDepth(400);
@@ -327,6 +330,7 @@ export class Game extends Scene {
 				fontFamily: "Georgia",
 				fontSize: 36,
 				color: "#4a4a4a",
+				resolution: TEXT_RESOLUTION,
 			})
 			.setDepth(200);
 
@@ -335,6 +339,7 @@ export class Game extends Scene {
 				fontFamily: "Georgia",
 				fontSize: 20,
 				color: "#7a7a7a",
+				resolution: TEXT_RESOLUTION,
 			})
 			.setDepth(200);
 
@@ -393,6 +398,7 @@ export class Game extends Scene {
 				fontFamily: "Georgia",
 				fontSize: 64,
 				color: "#ffffff",
+				resolution: TEXT_RESOLUTION,
 			})
 			.setOrigin(0.5)
 			.setDepth(301);
@@ -402,6 +408,7 @@ export class Game extends Scene {
 				fontFamily: "Georgia",
 				fontSize: 40,
 				color: "#f5f0e8",
+				resolution: TEXT_RESOLUTION,
 			})
 			.setOrigin(0.5)
 			.setDepth(301);
@@ -416,6 +423,7 @@ export class Game extends Scene {
 				fontFamily: "Georgia",
 				fontSize: 32,
 				color: "#333333",
+				resolution: TEXT_RESOLUTION,
 			})
 			.setOrigin(0.5)
 			.setDepth(302);
@@ -433,6 +441,7 @@ export class Game extends Scene {
 				fontSize: 72,
 				color: "#4a4a4a",
 				align: "center",
+				resolution: TEXT_RESOLUTION,
 			})
 			.setOrigin(0.5)
 			.setDepth(200);
