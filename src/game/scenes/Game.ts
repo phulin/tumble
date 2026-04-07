@@ -175,15 +175,37 @@ export class Game extends Scene {
 	findLongestWord(
 		letters: Phaser.GameObjects.Text[],
 	): { word: string; path: number[] } | null {
-		let best: { word: string; path: number[] } | null = null;
+		const n = letters.length;
 
-		const dfs = (
-			idx: number,
-			trieNode: TrieNode,
-			word: string,
-			path: number[],
-			visited: Set<number>,
-		) => {
+		// Precompute adjacency list once. Broad-phase AABB reject before GJK.
+		const bodies = letters.map((t) => t.body as MatterJS.BodyType);
+		const bounds = bodies.map((b) => b.bounds);
+		const vertsList = bodies.map((b) => b.vertices as MatterJS.Vector[]);
+		const adj: number[][] = [];
+		for (let i = 0; i < n; i++) adj.push([]);
+		for (let i = 0; i < n; i++) {
+			const bi = bounds[i];
+			for (let j = i + 1; j < n; j++) {
+				const bj = bounds[j];
+				// AABB broad-phase: skip if expanded boxes don't overlap
+				if (
+					bi.max.x + SEARCH_RADIUS < bj.min.x ||
+					bj.max.x + SEARCH_RADIUS < bi.min.x ||
+					bi.max.y + SEARCH_RADIUS < bj.min.y ||
+					bj.max.y + SEARCH_RADIUS < bi.min.y
+				) continue;
+				if (gjkDistance(vertsList[i], vertsList[j]) <= SEARCH_RADIUS) {
+					adj[i].push(j);
+					adj[j].push(i);
+				}
+			}
+		}
+
+		let best: { word: string; path: number[] } | null = null;
+		const visited = new Uint8Array(n);
+		const path: number[] = [];
+
+		const dfs = (idx: number, trieNode: TrieNode, word: string) => {
 			// Consume all characters of this text object through the trie
 			let node = trieNode;
 			let consumed = word;
@@ -194,31 +216,30 @@ export class Game extends Scene {
 				node = next;
 			}
 
-			const newPath = [...path, idx];
+			path.push(idx);
 
 			if (node.isWord && consumed.length >= MIN_WORD_LENGTH) {
 				if (!best || consumed.length > best.word.length) {
-					best = { word: consumed, path: newPath };
+					best = { word: consumed, path: path.slice() };
 				}
 			}
 
-			const curr = letters[idx];
-			const cv = (curr.body as MatterJS.BodyType).vertices as MatterJS.Vector[];
-			for (let j = 0; j < letters.length; j++) {
-				if (visited.has(j)) continue;
-				const other = letters[j];
-				const ov = (other.body as MatterJS.BodyType).vertices as MatterJS.Vector[];
-				if (gjkDistance(cv, ov) <= SEARCH_RADIUS) {
-					visited.add(j);
-					dfs(j, node, consumed, newPath, visited);
-					visited.delete(j);
-				}
+			const neighbors = adj[idx];
+			for (let k = 0; k < neighbors.length; k++) {
+				const j = neighbors[k];
+				if (visited[j]) continue;
+				visited[j] = 1;
+				dfs(j, node, consumed);
+				visited[j] = 0;
 			}
+
+			path.pop();
 		};
 
-		for (let i = 0; i < letters.length; i++) {
-			const visited = new Set<number>([i]);
-			dfs(i, this.trie, "", [], visited);
+		for (let i = 0; i < n; i++) {
+			visited[i] = 1;
+			dfs(i, this.trie, "");
+			visited[i] = 0;
 		}
 
 		return best;
@@ -351,7 +372,7 @@ export class Game extends Scene {
 		});
 
 		this.time.addEvent({
-			delay: 200,
+			delay: 100,
 			callback: this.combineLongestWord,
 			callbackScope: this,
 			loop: true,
