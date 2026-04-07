@@ -1,0 +1,38 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+	<defs>
+		<clipPath clipPathUnits="userSpaceOnUse" id="cp1">
+			<path d="m0 0h512v512h-512z"/>
+		</clipPath>
+	</defs>
+	<style>
+		tspan { white-space:pre } 
+		.s0 { fill: #f5f0e8 } 
+		.t1 { font-size: 290px;fill: #4a4a4a;font-family: "Georgia" } 
+		.t2 { font-size: 275px;fill: #4a4a4a;font-family: "Georgia" } 
+		.t3 { font-size: 268px;fill: #4a4a4a;font-family: "Georgia" } 
+		.t4 { font-size: 278px;fill: #4a4a4a;font-family: "Georgia" } 
+	</style>
+	<g id="Layer 1">
+		<path class="s0" d="m0 0h512v512h-512z"/>
+		<g id="Clip-Path" clip-path="url(#cp1)">
+			<g>
+				<text id="T" style="transform: matrix(1.336,-0.486,.486,1.336,87.09,340.531)">
+					<tspan x="0" y="0" class="t1">T
+</tspan>
+				</text>
+				<text id="U" style="transform: matrix(1.148,.308,-0.308,1.148,230,205)">
+					<tspan x="0" y="0" class="t2">U
+</tspan>
+				</text>
+				<text id="M" style="transform: matrix(1.137,.18,-0.18,1.137,-8.569,471.735)">
+					<tspan x="0" y="0" class="t3">M
+</tspan>
+				</text>
+				<text id="B" style="transform: matrix(1.285,-0.368,.368,1.285,326.877,517.46)">
+					<tspan x="0" y="0" class="t4">B
+</tspan>
+				</text>
+			</g>
+		</g>
+	</g>
+</svg>
