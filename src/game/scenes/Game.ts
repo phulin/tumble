@@ -1,4 +1,3 @@
-import { EventBus } from "../EventBus";
 import { Scene } from "phaser";
 
 export class Game extends Scene {
@@ -12,10 +11,7 @@ export class Game extends Scene {
 
 	create() {
 		this.camera = this.cameras.main;
-		this.camera.setBackgroundColor(0x00ff00);
-
-		this.background = this.add.image(512, 384, "background");
-		this.background.setAlpha(0.5);
+		this.camera.setBackgroundColor(0xf5f0e8);
 
 		this.gameText = this.add
 			.text(
@@ -23,21 +19,13 @@ export class Game extends Scene {
 				384,
 				"Make something fun!\nand share it with us:\nsupport@phaser.io",
 				{
-					fontFamily: "Arial Black",
+					fontFamily: "Georgia",
 					fontSize: 38,
-					color: "#ffffff",
-					stroke: "#000000",
-					strokeThickness: 8,
+					color: "#4a4a4a",
 					align: "center",
 				},
 			)
 			.setOrigin(0.5)
 			.setDepth(100);
-
-		EventBus.emit("current-scene-ready", this);
-	}
-
-	changeScene() {
-		this.scene.start("GameOver");
 	}
 }
