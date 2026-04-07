@@ -1,11 +1,14 @@
 import { Scene } from "phaser";
 
+const LETTER_BAG = "EEEEEEEEEAAAAAARRRRIIIIOOOTTNNNSSSLLDDGGBCMPFHKUVWY";
+
 export class Game extends Scene {
 	camera: Phaser.Cameras.Scene2D.Camera;
 	background: Phaser.GameObjects.Image;
 	gameText: Phaser.GameObjects.Text;
 	letterTimer: Phaser.Time.TimerEvent;
 
+	nextLetter: Phaser.GameObjects.Text;
 	fallingTexts: Phaser.GameObjects.Text[] = [];
 
 	constructor() {
@@ -16,43 +19,28 @@ export class Game extends Scene {
 		this.camera = this.cameras.main;
 		this.camera.setBackgroundColor(0xf5f0e8);
 
-		this.letterTimer = this.time.addEvent({
-			callback: this.timerEvent,
-			callbackScope: this,
-			delay: 5000,
-			loop: true,
-		});
-		this.timerEvent();
+		this.createNextLetter();
 
-		this.gameText = this.add
-			.text(
-				512,
-				384,
-				"Make something fun!\nand share it with us:\nsupport@phaser.io",
-				{
-					fontFamily: "Georgia",
-					fontSize: 38,
-					color: "#4a4a4a",
-					align: "center",
-				},
-			)
-			.setOrigin(0.5)
-			.setDepth(100);
+		this.input.on("pointerup", () => this.dropNextLetter());
+		this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
+			this.nextLetter.x = pointer.x;
+		});
 	}
 
-	public timerEvent(): void {
-		console.log("timer");
-		const text = this.add.text(512, 200, "text", {
+	public createNextLetter() {
+		const letter = LETTER_BAG[Math.floor(Math.random() * LETTER_BAG.length)];
+		this.nextLetter = this.add.text(this.input.x, 50, letter, {
 			fontFamily: "Georgia",
-			fontSize: 24,
+			fontSize: 36,
 			color: "#4a4a4a",
 			align: "center",
 		})
 			.setOrigin(0.5)
-			.setDepth(200);
+			.setDepth(200); 
+	}
 
-		this.matter.add.gameObject(text);
-
-		this.fallingTexts.push(text);
+	public dropNextLetter() {
+		this.matter.add.gameObject(this.nextLetter);
+		this.createNextLetter();
 	}
 }
