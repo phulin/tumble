@@ -25,7 +25,9 @@
 		"build": "node log.js build & vite build --config vite/config.prod.mjs",
 		"dev-nolog": "vite --config vite/config.dev.mjs",
 		"build-nolog": "vite build --config vite/config.prod.mjs",
-		"deploy": "vite build --config vite/config.prod.mjs && wrangler pages deploy"
+		"deploy": "vite build --config vite/config.prod.mjs && wrangler pages deploy",
+		"test": "vitest run",
+		"test:watch": "vitest"
 	},
 	"dependencies": {
 		"phaser": "^3.90.0",
@@ -39,6 +41,7 @@
 		"@types/react-dom": "^19.2.3",
 		"@vitejs/plugin-react": "^6.0.1",
 		"typescript": "~6.0.2",
-		"vite": "^8.0.7"
+		"vite": "^8.0.7",
+		"vitest": "^4.1.3"
 	}
 }
