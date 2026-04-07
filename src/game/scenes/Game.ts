@@ -27,6 +27,43 @@ export class Game extends Scene {
 		super("Game");
 	}
 
+	// Scan the text object's internal canvas to find the tightest rectangle around actual pixels.
+	// Returns dimensions in game units (accounts for canvas resolution scaling).
+	glyphBounds(text: Phaser.GameObjects.Text): { width: number; height: number } {
+		const canvas = text.canvas;
+		const ctx = text.context;
+		const cw = canvas.width;
+		const ch = canvas.height;
+		const data = ctx.getImageData(0, 0, cw, ch).data;
+
+		let minX = cw, maxX = 0, minY = ch, maxY = 0;
+		for (let y = 0; y < ch; y++) {
+			for (let x = 0; x < cw; x++) {
+				if (data[(y * cw + x) * 4 + 3] > 10) {
+					if (x < minX) minX = x;
+					if (x > maxX) maxX = x;
+					if (y < minY) minY = y;
+					if (y > maxY) maxY = y;
+				}
+			}
+		}
+
+		if (minX > maxX) return { width: text.width, height: text.height };
+
+		const scale = cw / text.width;
+		return {
+			width: (maxX - minX + 1) / scale,
+			height: (maxY - minY + 1) / scale,
+		};
+	}
+
+	addPhysics(text: Phaser.GameObjects.Text) {
+		const { width, height } = this.glyphBounds(text);
+		return this.matter.add.gameObject(text, {
+			shape: { type: "rectangle", width, height },
+		});
+	}
+
 	buildTrie(words: string[]): TrieNode {
 		const root: TrieNode = { children: new Map(), isWord: false };
 		for (const word of words) {
@@ -128,7 +165,7 @@ export class Game extends Scene {
 			.setOrigin(0.5)
 			.setDepth(150);
 
-		this.matter.add.gameObject(wordObj);
+		this.addPhysics(wordObj);
 		this.fallingTexts.push(wordObj);
 	}
 
@@ -254,7 +291,7 @@ export class Game extends Scene {
 
 	public dropNextLetter() {
 		this.nextLetter.y = PLAY_AREA_TOP;
-		this.matter.add.gameObject(this.nextLetter);
+		this.addPhysics(this.nextLetter);
 		this.letterDropTimes.set(this.nextLetter, this.time.now);
 		this.fallingTexts.push(this.nextLetter);
 		this.score++;
