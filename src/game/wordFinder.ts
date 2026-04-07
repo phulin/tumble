@@ -31,7 +31,10 @@ export interface LetterShape {
 }
 
 export function makeLetterShape(text: string, vertices: Vec2[]): LetterShape {
-	let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+	let minX = Infinity,
+		minY = Infinity,
+		maxX = -Infinity,
+		maxY = -Infinity;
 	for (const v of vertices) {
 		if (v.x < minX) minX = v.x;
 		if (v.y < minY) minY = v.y;
@@ -57,7 +60,8 @@ export function buildAdjacency(
 				b.maxX + searchRadius < a.minX ||
 				a.maxY + searchRadius < b.minY ||
 				b.maxY + searchRadius < a.minY
-			) continue;
+			)
+				continue;
 			if (gjkDistance(a.vertices, b.vertices) <= searchRadius) {
 				adj[i].push(j);
 				adj[j].push(i);
@@ -92,7 +96,8 @@ export function findLongestWord(
 
 		// Skip length-1 paths that are just an already-formed word re-identifying
 		// itself, so they don't poison the search and block shorter words from forming.
-		const isTrivialReDetect = path.length === 1 && letters[idx].text === consumed;
+		const isTrivialReDetect =
+			path.length === 1 && letters[idx].text === consumed;
 		if (node.isWord && consumed.length >= minWordLength && !isTrivialReDetect) {
 			if (!best || consumed.length > best.word.length) {
 				best = { word: consumed, path: path.slice() };

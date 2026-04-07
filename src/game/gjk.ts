@@ -1,13 +1,19 @@
 export type Vec2 = { x: number; y: number };
 
-function dot2(a: Vec2, b: Vec2) { return a.x * b.x + a.y * b.y; }
+function dot2(a: Vec2, b: Vec2) {
+	return a.x * b.x + a.y * b.y;
+}
 
 export function gjkDistance(va: Vec2[], vb: Vec2[]): number {
 	function support(verts: Vec2[], d: Vec2): Vec2 {
-		let best = verts[0], bestDot = dot2(d, verts[0]);
+		let best = verts[0],
+			bestDot = dot2(d, verts[0]);
 		for (const v of verts) {
 			const dd = dot2(d, v);
-			if (dd > bestDot) { bestDot = dd; best = v; }
+			if (dd > bestDot) {
+				bestDot = dd;
+				best = v;
+			}
 		}
 		return best;
 	}
@@ -45,11 +51,20 @@ export function gjkDistance(va: Vec2[], vb: Vec2[]): number {
 		const dAB = cross2({ x: B.x - A.x, y: B.y - A.y }, { x: -A.x, y: -A.y });
 		const dBC = cross2({ x: C.x - B.x, y: C.y - B.y }, { x: -B.x, y: -B.y });
 		const dCA = cross2({ x: A.x - C.x, y: A.y - C.y }, { x: -C.x, y: -C.y });
-		if ((dAB >= 0 && dBC >= 0 && dCA >= 0) || (dAB <= 0 && dBC <= 0 && dCA <= 0))
+		if (
+			(dAB >= 0 && dBC >= 0 && dCA >= 0) ||
+			(dAB <= 0 && dBC <= 0 && dCA <= 0)
+		)
 			return [s, { x: 0, y: 0 }];
 
-		let minDist = Infinity, bestSimplex: Vec2[] = [A], bestPoint: Vec2 = A;
-		for (const [e0, e1] of [[A, B], [B, C], [C, A]] as [Vec2, Vec2][]) {
+		let minDist = Infinity,
+			bestSimplex: Vec2[] = [A],
+			bestPoint: Vec2 = A;
+		for (const [e0, e1] of [
+			[A, B],
+			[B, C],
+			[C, A],
+		] as [Vec2, Vec2][]) {
 			const p = closestOnSegment(e0, e1);
 			const d = dot2(p, p);
 			if (d < minDist) {

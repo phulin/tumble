@@ -4,7 +4,7 @@ import { gjkDistance } from "../gjk";
 
 const LETTER_BAG = "EEEEEEEEEAAAAAARRRRIIIIOOOTTNNNSSSLLDDGGBCMPFHKUVWY";
 const SEARCH_RADIUS = 60;
-const MIN_WORD_LENGTH = 3;
+const MIN_WORD_LENGTH = 4;
 const PLAY_AREA_TOP = 80; // below score label
 const TEXT_RESOLUTION = window.devicePixelRatio || 1;
 
@@ -114,7 +114,8 @@ export class Game extends Scene {
 					bj.max.x + SEARCH_RADIUS < bi.min.x ||
 					bi.max.y + SEARCH_RADIUS < bj.min.y ||
 					bj.max.y + SEARCH_RADIUS < bi.min.y
-				) continue;
+				)
+					continue;
 				if (gjkDistance(vertsList[i], vertsList[j]) <= SEARCH_RADIUS) {
 					adj[i].push(j);
 					adj[j].push(i);
@@ -141,8 +142,13 @@ export class Game extends Scene {
 
 			// Skip length-1 paths that are just an already-formed word re-identifying
 			// itself, so they don't poison the search and block shorter words from forming.
-			const isTrivialReDetect = path.length === 1 && letters[idx].text === consumed;
-			if (node.isWord && consumed.length >= MIN_WORD_LENGTH && !isTrivialReDetect) {
+			const isTrivialReDetect =
+				path.length === 1 && letters[idx].text === consumed;
+			if (
+				node.isWord &&
+				consumed.length >= MIN_WORD_LENGTH &&
+				!isTrivialReDetect
+			) {
 				if (!best || consumed.length > best.word.length) {
 					best = { word: consumed, path: path.slice() };
 				}
@@ -249,9 +255,15 @@ export class Game extends Scene {
 		const thick = 50;
 
 		this.wallBodies.push(
-			this.matter.add.rectangle(w / 2, h + thick / 2, w + thick * 2, thick, { isStatic: true }),
-			this.matter.add.rectangle(-thick / 2, h / 2, thick, h * 2, { isStatic: true }),
-			this.matter.add.rectangle(w + thick / 2, h / 2, thick, h * 2, { isStatic: true }),
+			this.matter.add.rectangle(w / 2, h + thick / 2, w + thick * 2, thick, {
+				isStatic: true,
+			}),
+			this.matter.add.rectangle(-thick / 2, h / 2, thick, h * 2, {
+				isStatic: true,
+			}),
+			this.matter.add.rectangle(w + thick / 2, h / 2, thick, h * 2, {
+				isStatic: true,
+			}),
 		);
 	}
 
@@ -284,9 +296,9 @@ export class Game extends Scene {
 			})
 			.setDepth(200);
 
-			this.createBoundaries();
+		this.createBoundaries();
 
-		this.scale.on('resize', (gameSize: Phaser.Structs.Size) => {
+		this.scale.on("resize", (gameSize: Phaser.Structs.Size) => {
 			this.camera.setSize(gameSize.width, gameSize.height);
 			this.createBoundaries();
 		});
@@ -405,7 +417,7 @@ export class Game extends Scene {
 		const angle = this.nextLetter.angle;
 		this.nextLetter.y = PLAY_AREA_TOP;
 		this.addPhysics(this.nextLetter);
-		const body = (this.nextLetter as any).body as MatterJS.BodyType;
+		const body = this.nextLetter.body as MatterJS.BodyType;
 		this.matter.body.setAngle(body, Phaser.Math.DegToRad(angle));
 		this.letterDropTimes.set(this.nextLetter, this.time.now);
 		this.fallingTexts.push(this.nextLetter);

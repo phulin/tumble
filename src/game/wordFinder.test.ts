@@ -8,9 +8,17 @@ import {
 	makeLetterShape,
 } from "./wordFinder";
 
-function rotRect(cx: number, cy: number, w: number, h: number, angle: number): Vec2[] {
-	const hw = w / 2, hh = h / 2;
-	const cos = Math.cos(angle), sin = Math.sin(angle);
+function rotRect(
+	cx: number,
+	cy: number,
+	w: number,
+	h: number,
+	angle: number,
+): Vec2[] {
+	const hw = w / 2,
+		hh = h / 2;
+	const cos = Math.cos(angle),
+		sin = Math.sin(angle);
 	return [
 		{ x: -hw, y: -hh },
 		{ x: hw, y: -hh },
@@ -35,7 +43,17 @@ function letter(
 
 const SEARCH_RADIUS = 60;
 
-const trie = buildTrie(["CAT", "CATS", "DOG", "DOVE", "DO", "DOVES", "OVE", "ED", "DE"]);
+const trie = buildTrie([
+	"CAT",
+	"CATS",
+	"DOG",
+	"DOVE",
+	"DO",
+	"DOVES",
+	"OVE",
+	"ED",
+	"DE",
+]);
 
 describe("findLongestWord: basic word finding", () => {
 	it("finds CAT from three adjacent letters", () => {

@@ -7,7 +7,8 @@ import { gjkDistance, type Vec2 } from "./gjk";
 
 /** Axis-aligned rectangle centered at (cx, cy). */
 function rect(cx: number, cy: number, w: number, h: number): Vec2[] {
-	const hw = w / 2, hh = h / 2;
+	const hw = w / 2,
+		hh = h / 2;
 	return [
 		{ x: cx - hw, y: cy - hh },
 		{ x: cx + hw, y: cy - hh },
@@ -17,9 +18,17 @@ function rect(cx: number, cy: number, w: number, h: number): Vec2[] {
 }
 
 /** Rectangle centered at (cx, cy), rotated by `angle` radians. */
-function rotRect(cx: number, cy: number, w: number, h: number, angle: number): Vec2[] {
-	const hw = w / 2, hh = h / 2;
-	const cos = Math.cos(angle), sin = Math.sin(angle);
+function rotRect(
+	cx: number,
+	cy: number,
+	w: number,
+	h: number,
+	angle: number,
+): Vec2[] {
+	const hw = w / 2,
+		hh = h / 2;
+	const cos = Math.cos(angle),
+		sin = Math.sin(angle);
 	const locals: Vec2[] = [
 		{ x: -hw, y: -hh },
 		{ x: hw, y: -hh },
@@ -35,23 +44,28 @@ function rotRect(cx: number, cy: number, w: number, h: number, angle: number): V
 /** Brute-force distance between two convex polygons (for verification). */
 function bruteForceDistance(va: Vec2[], vb: Vec2[]): number {
 	function distPointSeg(p: Vec2, a: Vec2, b: Vec2): number {
-		const abx = b.x - a.x, aby = b.y - a.y;
+		const abx = b.x - a.x,
+			aby = b.y - a.y;
 		const lenSq = abx * abx + aby * aby;
 		if (lenSq < 1e-12) {
-			const dx = p.x - a.x, dy = p.y - a.y;
+			const dx = p.x - a.x,
+				dy = p.y - a.y;
 			return Math.sqrt(dx * dx + dy * dy);
 		}
 		let t = ((p.x - a.x) * abx + (p.y - a.y) * aby) / lenSq;
 		t = Math.max(0, Math.min(1, t));
-		const cx = a.x + t * abx, cy = a.y + t * aby;
-		const dx = p.x - cx, dy = p.y - cy;
+		const cx = a.x + t * abx,
+			cy = a.y + t * aby;
+		const dx = p.x - cx,
+			dy = p.y - cy;
 		return Math.sqrt(dx * dx + dy * dy);
 	}
 	function polyContainsPoint(poly: Vec2[], p: Vec2): boolean {
 		// Assumes convex polygon, consistent winding.
 		let sign = 0;
 		for (let i = 0; i < poly.length; i++) {
-			const a = poly[i], b = poly[(i + 1) % poly.length];
+			const a = poly[i],
+				b = poly[(i + 1) % poly.length];
 			const cross = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
 			if (Math.abs(cross) < 1e-12) continue;
 			const s = cross > 0 ? 1 : -1;
@@ -66,9 +80,11 @@ function bruteForceDistance(va: Vec2[], vb: Vec2[]): number {
 
 	let min = Infinity;
 	for (let i = 0; i < va.length; i++) {
-		const a0 = va[i], a1 = va[(i + 1) % va.length];
+		const a0 = va[i],
+			a1 = va[(i + 1) % va.length];
 		for (let j = 0; j < vb.length; j++) {
-			const b0 = vb[j], b1 = vb[(j + 1) % vb.length];
+			const b0 = vb[j],
+				b1 = vb[(j + 1) % vb.length];
 			min = Math.min(min, distPointSeg(a0, b0, b1));
 			min = Math.min(min, distPointSeg(a1, b0, b1));
 			min = Math.min(min, distPointSeg(b0, a0, a1));

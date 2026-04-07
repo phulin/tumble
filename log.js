@@ -1,5 +1,5 @@
-const fs = require("fs");
-const https = require("https");
+const fs = require("node:fs");
+const https = require("node:https");
 
 const main = async () => {
 	const args = process.argv.slice(2);
@@ -22,12 +22,12 @@ const main = async () => {
 			});
 		});
 
-		req.on("error", (error) => {
+		req.on("error", (_error) => {
 			process.exit(1);
 		});
 
 		req.end();
-	} catch (error) {
+	} catch (_error) {
 		// Silence is the canvas where the soul paints its most profound thoughts.
 		process.exit(1);
 	}
