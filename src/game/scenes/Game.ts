@@ -435,6 +435,7 @@ export class Game extends Scene {
 
 	public createNextLetter() {
 		const letter = LETTER_BAG[Math.floor(Math.random() * LETTER_BAG.length)];
+		const angle = Phaser.Math.Between(-15, 15);
 		this.nextLetter = this.add
 			.text(this.input.x, 100, letter, {
 				fontFamily: "Georgia",
@@ -444,7 +445,19 @@ export class Game extends Scene {
 				resolution: TEXT_RESOLUTION,
 			})
 			.setOrigin(0.5)
-			.setDepth(200);
+			.setDepth(200)
+			.setAngle(angle)
+			.setScale(0)
+			.setAlpha(0);
+
+		this.tweens.add({
+			targets: this.nextLetter,
+			scaleX: 1,
+			scaleY: 1,
+			alpha: 1,
+			duration: 200,
+			ease: "Back.easeOut",
+		});
 	}
 
 	public dropNextLetter() {
