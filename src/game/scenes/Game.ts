@@ -2,7 +2,7 @@ import { Scene } from "phaser";
 import wordsRaw from "../../words.txt?raw";
 
 const LETTER_BAG = "EEEEEEEEEAAAAAARRRRIIIIOOOTTNNNSSSLLDDGGBCMPFHKUVWY";
-const SEARCH_RADIUS = 40;
+const SEARCH_RADIUS = 50;
 const MIN_WORD_LENGTH = 3;
 const PLAY_AREA_TOP = 80; // below score label
 const TEXT_RESOLUTION = window.devicePixelRatio || 1;
