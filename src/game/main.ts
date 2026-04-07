@@ -7,6 +7,20 @@ const config: Phaser.Types.Core.GameConfig = {
 	type: AUTO,
 	width: 1024,
 	height: 768,
+	physics: {
+		default: "matter",
+		matter: {
+			gravity: { x: 0, y: 1 },
+			debug: true,
+			setBounds: {
+				x: 0,
+				y: 0,
+				width: 1024,
+				height: 768,
+				bottom: true,
+			}
+		},
+	},
 	parent: "game-container",
 	backgroundColor: "#028af8",
 	scene: MainGame,
