@@ -2,7 +2,7 @@ import { Scene } from "phaser";
 import wordsRaw from "../../words.txt?raw";
 
 const LETTER_BAG = "EEEEEEEEEAAAAAARRRRIIIIOOOTTNNNSSSLLDDGGBCMPFHKUVWY";
-const SEARCH_RADIUS = 50;
+const SEARCH_RADIUS = 60;
 const MIN_WORD_LENGTH = 3;
 const PLAY_AREA_TOP = 80; // below score label
 const TEXT_RESOLUTION = window.devicePixelRatio || 1;
@@ -277,7 +277,7 @@ export class Game extends Scene {
 		const wordObj = this.add
 			.text(cx, cy, word, {
 				fontFamily: "Georgia",
-				fontSize: Math.max(8, 77 - 5 * word.length),
+				fontSize: Math.max(14, 77 - 5 * word.length),
 				color: `#${ch}${ch}${ch}`,
 				align: "center",
 				resolution: TEXT_RESOLUTION,
