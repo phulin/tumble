@@ -482,8 +482,11 @@ export class Game extends Scene {
 	}
 
 	public dropNextLetter() {
+		const angle = this.nextLetter.angle;
 		this.nextLetter.y = PLAY_AREA_TOP;
 		this.addPhysics(this.nextLetter);
+		const body = (this.nextLetter as any).body as MatterJS.BodyType;
+		this.matter.body.setAngle(body, Phaser.Math.DegToRad(angle));
 		this.letterDropTimes.set(this.nextLetter, this.time.now);
 		this.fallingTexts.push(this.nextLetter);
 		this.createNextLetter();
