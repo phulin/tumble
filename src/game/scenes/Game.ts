@@ -10,6 +10,8 @@ export class Game extends Scene {
 
 	nextLetter: Phaser.GameObjects.Text;
 	fallingTexts: Phaser.GameObjects.Text[] = [];
+	scoreText: Phaser.GameObjects.Text;
+	score: number = 0;
 
 	constructor() {
 		super("Game");
@@ -18,6 +20,12 @@ export class Game extends Scene {
 	create() {
 		this.camera = this.cameras.main;
 		this.camera.setBackgroundColor(0xf5f0e8);
+
+		this.scoreText = this.add.text(16, 16, "Dropped: 0", {
+			fontFamily: "Georgia",
+			fontSize: 36,
+			color: "#4a4a4a",
+		}).setDepth(200);
 
 		this.createNextLetter();
 
@@ -41,6 +49,8 @@ export class Game extends Scene {
 
 	public dropNextLetter() {
 		this.matter.add.gameObject(this.nextLetter);
+		this.score++;
+		this.scoreText.setText(`Dropped: ${this.score}`);
 		this.createNextLetter();
 	}
 }
