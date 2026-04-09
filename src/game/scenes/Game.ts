@@ -252,12 +252,21 @@ export class Game extends Scene {
 
 		const w = this.scale.width;
 		const h = this.scale.height;
+		// On mobile browsers, visualViewport.height excludes the address bar
+		// overlay; use it so letters don't fall behind the bar. On desktop it
+		// equals the full height, so behavior is unchanged.
+		const vv = window.visualViewport;
+		const floorY = vv ? Math.min(h, vv.height) : h;
 		const thick = 50;
 
 		this.wallBodies.push(
-			this.matter.add.rectangle(w / 2, h + thick / 2, w + thick * 2, thick, {
-				isStatic: true,
-			}),
+			this.matter.add.rectangle(
+				w / 2,
+				floorY + thick / 2,
+				w + thick * 2,
+				thick,
+				{ isStatic: true },
+			),
 			this.matter.add.rectangle(-thick / 2, h / 2, thick, h * 2, {
 				isStatic: true,
 			}),
@@ -301,6 +310,12 @@ export class Game extends Scene {
 		this.scale.on("resize", (gameSize: Phaser.Structs.Size) => {
 			this.camera.setSize(gameSize.width, gameSize.height);
 			this.createBoundaries();
+		});
+
+		const onViewportResize = () => this.createBoundaries();
+		window.visualViewport?.addEventListener("resize", onViewportResize);
+		this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+			window.visualViewport?.removeEventListener("resize", onViewportResize);
 		});
 
 		this.time.addEvent({
