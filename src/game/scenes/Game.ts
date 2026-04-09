@@ -189,10 +189,17 @@ export class Game extends Scene {
 		const cy =
 			path.reduce((s, i) => s + this.fallingTexts[i].y, 0) / path.length;
 
-		// Remove constituent letter objects from physics and scene
+		// Remove constituent letter objects from physics and scene.
+		// Deep-remove bodies first so Matter also purges any active collision
+		// pairs referencing them — otherwise the next physics step can crash
+		// dereferencing a gutted body (`e.position` undefined).
 		const toRemove = path.map((i) => this.fallingTexts[i]);
 		this.fallingTexts = this.fallingTexts.filter((_, i) => !pathSet.has(i));
 		for (const t of toRemove) {
+			const body = t.body as MatterJS.BodyType | null;
+			if (body) {
+				this.matter.world.remove(body, true);
+			}
 			t.destroy();
 		}
 
@@ -244,9 +251,9 @@ export class Game extends Scene {
 	}
 
 	createBoundaries() {
-		// Remove old walls
+		// Remove old walls (deep=true to also purge any active collision pairs)
 		for (const body of this.wallBodies) {
-			this.matter.world.remove(body);
+			this.matter.world.remove(body, true);
 		}
 		this.wallBodies = [];
 
